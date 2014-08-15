@@ -10,15 +10,15 @@ I guess for starters we'll just use ttl and some string.
 -}
 
 ttl = 60 -- 1 minute for now?
-
 bubbleTag = "some string"
 
-type Enriched b = { b | ttl: Int, tag: String }
-type Object = Enriched BBB.Body
+-- the Thing is whatever we want displayed in the dash
+type Thing = { ttl: Int, tag: String, body: Int }
+
 
 -- so this draws an enriched bubble, I hope?
-draw: Object -> Form
-draw { ttl, tag, pos, shape } = 
+draw: (BBB.Body, Thing) -> Form
+draw ({pos, shape}, {ttl, tag}) = 
   let s = case shape of
         BBB.Bubble radius -> circle radius
         BBB.Box (w,h) -> rect (w*2) (h*2)
@@ -27,16 +27,13 @@ draw { ttl, tag, pos, shape } =
   in group [body, info] |> move pos
 
 aBubble = BB.bubble 100 1 0.1 (0,0) (0,0)
-anObject = { aBubble | tag=bubbleTag }
-anObject2 = { anObject | ttl=60}
---{ point | z = 12 } 
 
 scene bodies = 
   let drawnBodies = map draw bodies 
   in collage 800 800 drawnBodies
 
---s1 = BB.step (0,0) (0,0) [anObject2]
+s1 = BB.step (0,0) (0,0) [aBubble]
 
 
-main = scene [anObject2]
+main = scene [(aBubble,Thing ttl bubbleTag 0)]
 --main = asText "bub"
